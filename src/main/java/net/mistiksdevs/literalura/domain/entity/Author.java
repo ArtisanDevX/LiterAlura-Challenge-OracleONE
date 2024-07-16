@@ -6,7 +6,7 @@ import net.mistiksdevs.literalura.network.model.AuthorData;
 import java.util.List;
 
 @Entity
-@Table(name = "author")
+@Table(name = "authors")
 public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,10 +14,16 @@ public class Author {
     private String name;
     private Integer birthYear;
     private Integer deathYear;
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Book> books;
 
     public Author() {
+    }
+
+    public Author(AuthorData authorData) {
+        this.name = authorData.name();
+        this.birthYear = authorData.birthYear();
+        this.deathYear = authorData.deathYear();
     }
 
     public Integer getDeathYear() {
@@ -52,20 +58,15 @@ public class Author {
         this.id = id;
     }
 
-    public void save(AuthorData authorData) {
-        this.name = authorData.name();
-        this.birthYear = authorData.birthYear();
-        this.deathYear = authorData.deathYear();
-    }
-
     @Override
     public String toString() {
-        return """
+        return String.format("""
                 ***************************************
-                Nombre:\s""" + name + """
-                Fecha de nacimiento:\s""" + birthYear + """
-                Fecha de fallecimiento:\s""" + deathYear + """
+                Informacion del Autor:
+                - Nombre: %s
+                - Cumpleaños: %d
+                - Deceso: %d
                 ***************************************
-                """;
+                """, name, birthYear, deathYear);
     }
 }

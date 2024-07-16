@@ -2,6 +2,7 @@ package net.mistiksdevs.literalura.domain.entity;
 
 import jakarta.persistence.*;
 import net.mistiksdevs.literalura.network.model.BookData;
+import java.util.List;
 
 @Entity
 @Table(name = "books")
@@ -10,13 +11,18 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    @ManyToOne(fetch = FetchType.EAGER)
+    private String language;
+    @ManyToOne
     @JoinColumn(name = "author_id")
     private Author author;
-    private String language;
-    private Integer downloadCount;
 
     public Book() {
+    }
+
+    public Book(BookData bookData, Author author) {
+        this.title = bookData.title();
+        this.language = bookData.languages().get(0);
+        this.author = author;
     }
 
     public Long getId() {
@@ -35,14 +41,6 @@ public class Book {
         this.title = title;
     }
 
-    public Author getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(Author author) {
-        this.author = author;
-    }
-
     public String getLanguage() {
         return language;
     }
@@ -51,18 +49,23 @@ public class Book {
         this.language = language;
     }
 
-    public Integer getDownloadCount() {
-        return downloadCount;
+    public Author getAuthor() {
+        return author;
     }
 
-    public void setDownloadCount(Integer downloadCount) {
-        this.downloadCount = downloadCount;
-    }
-
-    public void save(BookData bookData, Author author) {
-        this.title = bookData.title();
+    public void setAuthor(Author author) {
         this.author = author;
-        this.language = bookData.languages().get(0);
-        this.downloadCount = bookData.downloadCount();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("""
+                ***************************************
+                Informacion del Libro:
+                - Titulo: %s
+                - Lenguaje: %s
+                - Autor: %s
+                ***************************************
+                """, title, language, author.getName());
     }
 }
